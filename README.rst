@@ -33,8 +33,11 @@ Features
 Credits
 ---------
 
+The ding notification sound is from `Corsica_s`_
+
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+.. _`Corsica_S`: https://freesound.org/people/Corsica_S/sounds/91926/
 

@@ -13,25 +13,22 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
-    # TODO: put package requirements here
+    'aiohttp>=2.2.5',
+    'sockjs>=0.6.0',
 ]
 
-setup_requirements = [
-    # TODO(jnevrly): put setup requirements (distutils extensions, etc.) here
-]
+setup_requirements = []
 
-test_requirements = [
-    # TODO: put package test requirements here
-]
+test_requirements = []
 
 setup(
     name='waitabit',
     version='0.1.0',
-    description="The simplest waiting line management app.",
+    description="The simplest waiting line management.",
     long_description=readme + '\n\n' + history,
     author="Josef Nevrly",
     author_email='jnevrly@alps.cz',
-    url='https://github.com/jnevrly/waitabit',
+    url='https://github.com/calcite/waitabit',
     packages=find_packages(include=['waitabit']),
     entry_points={
         'console_scripts': [
