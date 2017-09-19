@@ -108,7 +108,6 @@ class WaitABit:
 
             if ((time_since_last_event >= self._session_timeout) and
                     self._session_screensaver_status is False):
-                print("Shutting down session")
                 # Delete the queue and activate screensaver
                 self._delete_queue('all')
                 self._set_screen_saver(True)
