@@ -7,7 +7,7 @@
       <div class="screensaver" v-show="screenSaver"></div>
     </transition>
     <div class="col-lg-9 latest-call" v-on:click="fullscreenToggle">
-      <p class="big-number">{{ (callList.length > 0) ? callList[0] : ''}}</p>
+      <p class="big-number" v-bind:key="callList[0]">{{ (callList.length > 0) ? callList[0] : ''}}</p>
     </div>
     <div class="col-lg-3 previous-calls">
       <transition-group name="previous-call-list" tag="ul"
@@ -151,11 +151,6 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-  .big-number {
-    font-size: 60vh;
-    margin-top: 8vh;
-  }
-
   .latest-call {
     display: inline-block;
     vertical-align: middle;
@@ -224,5 +219,18 @@
     font-size: 10vh;
     margin-top: 5vh;
     color: red;
+  }
+
+  @keyframes new-call {
+      0% {color: #42b983;}
+      70% {color: #42b983;}
+      100% {color: #2c3e50;}
+  }
+
+  .big-number {
+    font-size: 60vh;
+    margin-top: 8vh;
+    animation-name: new-call;
+    animation-duration: 3s;
   }
 </style>

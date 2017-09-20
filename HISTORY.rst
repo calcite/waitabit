@@ -2,6 +2,12 @@
 History
 =======
 
+0.3.0 (2017-09-20)
+------------------
+
+* Added animation for the new call
+* Removed scrollbars
+
 0.2.0 (2017-09-20)
 ------------------
 
