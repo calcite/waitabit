@@ -64,3 +64,6 @@ target/
 # The distributables
 !waitabit/frontend/dist/
 !waitabit/frontend/dist/*
+
+# PyCharm
+.idea/

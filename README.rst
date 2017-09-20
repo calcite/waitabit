@@ -18,13 +18,10 @@ dashboard to display the number (plus a history of previous numbers).
 
 The numbers are expected to be assigned separately (manually).
 
-.. figure:: docs/input_screenshot.png
+.. figure:: docs/mini_screenshots.png
 
-   UI panel for number input
+   UI panel for number input and Dashboard displaying the call queue.
 
-.. figure:: docs/panel_screenshot.png
-
-   Dashboard displaying the call queue.
 
 Implementation is a HTML5 and a simple server (Python/Asyncio)
 serving both UI screen and the dashboards.
