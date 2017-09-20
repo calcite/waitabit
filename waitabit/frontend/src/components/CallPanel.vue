@@ -13,7 +13,8 @@
       <transition-group name="previous-call-list" tag="ul"
                           class="previous-call-list">
         <li v-for="item in callList.slice(1)" v-bind:key="item"
-            v-bind:style="previousCallItemStyle">{{item}}</li>
+            v-bind:style="previousCallItemStyle"
+            class="previous-call-list-item">{{item}}</li>
       </transition-group>
     </div>
   </div>
@@ -47,9 +48,8 @@
     computed: {
       previousCallItemStyle: function () {
         return {
-          'font-size': ((100 / this.callListLen) * 0.611) + 'vh',
-          'border-bottom': 'gray solid 1px',
-          'padding': ((100 / this.callListLen) * 0.0599) + 'vh'
+          'font-size': ((100 / (this.callListLen - 1)) * 0.611) + 'vh',
+          'padding': ((100 / (this.callListLen - 1)) * 0.0599) + 'vh'
         }
       }
     },
@@ -167,10 +167,8 @@
     padding: 0px;
   }
 
-  .previous-call-item {
-    font-size: 7.6375vh;
+  .previous-call-list-item {
     border-bottom: gray solid 1px;
-    padding: 0.7487vh;
   }
 
   .previous-call-list-enter-active, .previous-call-list-leave-active {
@@ -232,5 +230,9 @@
     margin-top: 8vh;
     animation-name: new-call;
     animation-duration: 3s;
+  }
+
+  ul.previous-call-list  li:last-child {
+    border-bottom: none;
   }
 </style>
