@@ -6,7 +6,7 @@
     <transition name="fade">
       <div class="screensaver" v-show="screenSaver"></div>
     </transition>
-    <div class="col-lg-9 latest-call">
+    <div class="col-lg-9 latest-call" v-on:click="fullscreenToggle">
       <p class="big-number">{{ (callList.length > 0) ? callList[0] : ''}}</p>
     </div>
     <div class="col-lg-3 previous-calls">
@@ -88,11 +88,14 @@
         if ((msg.event === 'new_call') || (msg.event === 'delete')) {
           if (msg.event === 'new_call') {
             this.playDing()
+
             // Reset the screensaver stuff
             this.screenSaver = false
             clearTimeout(this.screenSaverAuto)
-            this.screenSaverAuto = setTimeout(this.finishSession.bind(this),
-              this.screenSaverTimeout)
+            if (this.screenSaverTimeout > 0) {
+              this.screenSaverAuto = setTimeout(this.finishSession.bind(this),
+                this.screenSaverTimeout)
+            }
           }
           this.callList = msg.queue
         } else if (msg.event === 'screensaver') {
@@ -116,10 +119,12 @@
           vm.screenSaverTimeout = response.body.timeout * 1000
           vm.screenSaver = response.body.status
 
-          if (this.screenSaverAuto == null) {
-            this.screenSaverAuto = setTimeout(this.finishSession.bind(this),
-              this.screenSaverTimeout)
+          if ((vm.screenSaverAuto == null) && (vm.screenSaverTimeout > 0)) {
+            vm.screenSaverAuto = setTimeout(vm.finishSession.bind(vm),
+              vm.screenSaverTimeout)
           }
+          // Doesn't solve situation when the screensaver timeout is updated.
+          // Then the last timeout will still finish
         }, (response) => {
           console.log(response)
         })

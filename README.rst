@@ -18,13 +18,11 @@ dashboard to display the number (plus a history of previous numbers).
 
 The numbers are expected to be assigned separately (manually).
 
-.. figure:: waitabit/frontend/static/input_screenshot.png
-   :scale: 50%
+.. figure:: docs/input_screenshot.png
 
    UI panel for number input
 
-.. figure:: waitabit/frontend/static/panel_screenshot.png
-   :scale: 50%
+.. figure:: docs/panel_screenshot.png
 
    Dashboard displaying the call queue.
 
@@ -39,7 +37,8 @@ events.
 
 The system has a screen-saver/session timeout option which would dim the
 dashboard and erase the queue after a selected time, to prevent screen burn-in.
-Screen-saver can be also enabled manually from the UI.
+Screen-saver can be also enabled manually from the UI. Any new call input
+deactivates the screen-saver.
 
 Requirements
 ------------
@@ -68,9 +67,12 @@ The server is started from command-line::
 The server command has several options apart of mandatory ``host``/``port``:
 
 * ``queue_size`` is the length of the order call history, which is displayed
-  on the dashboard
+  on the dashboard.
+
 * ``session_timeout`` is the timeout (in seconds) after which the session
   is closed by clearing the queue and activating the screen-saver.
+
+  Set to 0 to prevent session timeout/screen-saver activation.
 
 Help is also available with ``waitabit --help``.
 

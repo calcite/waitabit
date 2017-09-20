@@ -11,7 +11,7 @@ import logging
 @click.version_option()
 @click.option('--host', default='0.0.0.0', help="Host IP address")
 @click.option('--port', default=8000, help="Server port")
-@click.option('--queue_size', default=8,
+@click.option('--queue_size', default=7,
               help="Number of displayed items in the queue")
 @click.option('--session_timeout', default=3600,
               help="Number of seconds till the session times out"

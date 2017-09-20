@@ -133,12 +133,21 @@ class WaitABit:
         handler = self._app.make_handler()
         # self._app.on_shutdown.append(self._on_shutdown)
 
-        self._app.loop.run_until_complete(asyncio.gather(
-            self._app.loop.create_server(handler, host, port),
-            self._session_timeout_check())
-        )
+        if self._session_timeout == 0:
+            # Run the server without timeout check
+            self._app.loop.run_until_complete(
+                self._app.loop.create_server(handler, host, port) )
+            self._app.loop.run_forever()
 
-        # self._app.loop.run_forever()
+        elif self._session_timeout > 0:
+            # Run the server with timeout check coroutine
+            self._app.loop.run_until_complete(asyncio.gather(
+                self._app.loop.create_server(handler, host, port),
+                self._session_timeout_check()))
+        else:
+            raise Exception("Session timeout {0} is not allowed".format(
+                self._session_timeout))
+
 
 
 

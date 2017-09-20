@@ -249,7 +249,7 @@
         })
       },
       playClick: function () {
-        navigator.vibrate(200)
+        navigator.vibrate(50)
         if (this.clickSound.paused) {
           this.clickSound.play()
         } else {
