@@ -120,7 +120,9 @@
         sock: null,
         appStatus: 'disconnected',
         screenSaver: false,
-        clickSound: null
+        clickSound: null,
+        heartBeatInterval: 3000,
+        heartBeatTimer: null
       }
     },
     computed: {
@@ -225,6 +227,12 @@
       }, 10000),
       processNotification: function (sockMsg) {
         var msg = sockMsg
+
+        // In any case reset the heartbeat timeout
+        clearTimeout(this.heartBeatTimer)
+        this.heartBeatTimer = setTimeout(this.restartConnection.bind(this),
+          this.heartBeatInterval * 3)
+
         if ((msg.event === 'new_call') || (msg.event === 'delete')) {
           this.callList = msg.queue
         } else if (msg.event === 'screensaver') {
@@ -236,6 +244,7 @@
         var vm = this
         this.$http.get('api/queue').then((response) => {
           vm.callList = response.body.queue
+          vm.heartBeatInterval = response.body.heartbeat_interval * 1000
         }, (response) => {
           console.log(response)
         })
@@ -257,6 +266,11 @@
           this.clickSound.currentTime = 0
           this.clickSound.play()
         }
+      },
+      restartConnection: function () {
+        console.log('No heart beat detected, restarting connection.')
+        this.appStatus = 'disconnected'
+        this.sockjsSetup()
       }
     },
     mounted: function () {

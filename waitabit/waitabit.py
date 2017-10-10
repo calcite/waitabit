@@ -17,7 +17,8 @@ class WaitABit:
     INDEX = open(pkg_resources.resource_filename(
         'waitabit', 'frontend/dist/index.html')).read()
 
-    def __init__(self, queue_size, loop=None, session_timeout=3600):
+    def __init__(self, queue_size, loop=None, session_timeout=3600,
+                 heart_beat_interval=3):
         self._queue = deque(maxlen=queue_size)
         self._app = web.Application(loop=loop)
         self._sockjs_manager = None
@@ -37,6 +38,13 @@ class WaitABit:
                                  self._get_session_screen_saver)
 
         # Initialize websockets
+        self._last_broadcast = time.time()
+
+        if heart_beat_interval > 0:
+            self._heart_beat_interval = heart_beat_interval
+        else:
+            raise Exception("Heart beat interval 0 or less is not allowed.")
+
         sockjs.add_endpoint(self._app, self._sockjs_handler, name='notifier',
                             prefix='/api/notifications/')
 
@@ -44,7 +52,8 @@ class WaitABit:
         return web.Response(body=self.INDEX, content_type='text/html')
 
     async def _get_queue(self, request):
-        temp = {'queue': list(self._queue), 'length': self._queue.maxlen}
+        temp = {'queue': list(self._queue), 'length': self._queue.maxlen,
+                'heartbeat_interval': self._heart_beat_interval}
         return web.json_response(temp)
 
     async def _new_call(self, request):
@@ -112,9 +121,22 @@ class WaitABit:
                 self._delete_queue('all')
                 self._set_screen_saver(True)
 
+    async def _heart_beat(self):
+        """ This is additional high-level heartbeat, which attepts to prevent
+            SockJS connection stall on android devices (which somehow happens
+            event with SockJS's own heart-beat.
+        """
+        while True:
+            await asyncio.sleep(self._heart_beat_interval)
+            time_since_last_broadcast = time.time() - self._last_broadcast
+
+            if time_since_last_broadcast >= self._heart_beat_interval:
+                self._send_ws_message({'event': 'heartbeat'})
+
     def _send_ws_message(self, msg):
         if self._sockjs_manager:
             self._sockjs_manager.broadcast(msg)
+            self._last_broadcast = time.time()
 
     def _sockjs_handler(self, msg, session):
         """ SockJS handler is now not doing anything because we onlu use
@@ -134,21 +156,16 @@ class WaitABit:
         # self._app.on_shutdown.append(self._on_shutdown)
 
         if self._session_timeout == 0:
-            # Run the server without timeout check
-            self._app.loop.run_until_complete(
-                self._app.loop.create_server(handler, host, port) )
-            self._app.loop.run_forever()
-
-        elif self._session_timeout > 0:
-            # Run the server with timeout check coroutine
             self._app.loop.run_until_complete(asyncio.gather(
                 self._app.loop.create_server(handler, host, port),
-                self._session_timeout_check()))
+                self._heart_beat()))
+
+        elif self._session_timeout > 0:
+            self._app.loop.run_until_complete(asyncio.gather(
+                self._app.loop.create_server(handler, host, port),
+                self._heart_beat(),
+                self._session_timeout_check()
+            ))
         else:
             raise Exception("Session timeout {0} is not allowed".format(
                 self._session_timeout))
-
-
-
-
-

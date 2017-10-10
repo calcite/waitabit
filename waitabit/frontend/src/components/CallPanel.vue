@@ -42,7 +42,9 @@
         screenSaver: false,
         screenSaverTimeout: 3600000,
         screenSaverAuto: null,
-        dingSound: document.getElementById('ding')
+        dingSound: document.getElementById('ding'),
+        heartBeatInterval: 3000,
+        heartBeatTimer: null
       }
     },
     computed: {
@@ -85,6 +87,12 @@
       }, 10000),
       processNotification: function (sockMsg) {
         var msg = sockMsg
+
+        // In any case reset the heartbeat timeout
+        clearTimeout(this.heartBeatTimer)
+        this.heartBeatTimer = setTimeout(this.restartConnection.bind(this),
+          this.heartBeatInterval * 3)
+
         if ((msg.event === 'new_call') || (msg.event === 'delete')) {
           if (msg.event === 'new_call') {
             this.playDing()
@@ -109,6 +117,7 @@
         this.$http.get('api/queue').then((response) => {
           vm.callList = response.body.queue
           vm.callListLen = response.body.length
+          vm.heartBeatInterval = response.body.heartbeat_interval * 1000
         }, (response) => {
           console.log(response)
         })
@@ -140,6 +149,11 @@
       },
       finishSession: function () {
         this.screenSaver = true
+      },
+      restartConnection: function () {
+        console.log('No heart beat detected, restarting connection.')
+        this.appStatus = 'disconnected'
+        this.sockjsSetup()
       }
     },
     mounted: function () {

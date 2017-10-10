@@ -2,7 +2,12 @@
 History
 =======
 
-0.3.0 (2017-09-20)
+0.4.0 (2017-10-10)
+------------------
+
+* Added hearbeat to prevent SockJS stalling on Android
+
+3.0 (2017-09-20)
 ------------------
 
 * Added animation for the new call
