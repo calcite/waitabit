@@ -2,10 +2,15 @@
 History
 =======
 
+0.5.0 (2018-06-12)
+------------------
+
+* Added limit on number of digits per call-out number.
+
 0.4.0 (2017-10-10)
 ------------------
 
-* Added hearbeat to prevent SockJS stalling on Android
+* Added heartbeat to prevent SockJS stalling on Android
 
 3.0 (2017-09-20)
 ------------------

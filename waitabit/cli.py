@@ -19,14 +19,17 @@ import logging
                    " (queue is cleared and screensaver is enabled)."
                    " Set 0 for no timeout. (Default = 3600)")
 @click.option('--heart_beat', default=3,
-              help="Heart bead interval [seconds] "
+              help="Heart beat interval [seconds] "
                    "keeping the server connection alive. "
                    "(Default = 3)")
-def main(host, port, queue_size, session_timeout, heart_beat):
+@click.option('--max_digits', default=3,
+              help="Maximum number of digits a called-out number can have "
+                   "(Default = 3)")
+def main(host, port, queue_size, session_timeout, heart_beat, max_digits):
     """Wait-a-Bit server."""
     loop = asyncio.get_event_loop()
     srv = WaitABit(queue_size, loop=loop, session_timeout=session_timeout,
-                   heart_beat_interval=heart_beat)
+                   heart_beat_interval=heart_beat, max_digits=max_digits)
 
     click.echo("Input screen served at http://{0}:{1}/#/input".format(
         host, port))

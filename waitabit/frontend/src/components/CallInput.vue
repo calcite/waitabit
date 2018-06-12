@@ -113,7 +113,6 @@
     name: 'call-input',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App',
         strBuf: '',
         callList: [],
         fullscreen: false,
@@ -122,7 +121,8 @@
         screenSaver: false,
         clickSound: null,
         heartBeatInterval: 3000,
-        heartBeatTimer: null
+        heartBeatTimer: null,
+        maxDigits: 3
       }
     },
     computed: {
@@ -144,7 +144,9 @@
     methods: {
       numPress: function (value) {
         this.playClick()
-        this.strBuf += value
+        if (this.strBuf.length < this.maxDigits) {
+          this.strBuf += value
+        }
       },
       delPress: function () {
         this.playClick()
@@ -245,6 +247,7 @@
         this.$http.get('api/queue').then((response) => {
           vm.callList = response.body.queue
           vm.heartBeatInterval = response.body.heartbeat_interval * 1000
+          vm.maxDigits = response.body.max_digits
         }, (response) => {
           console.log(response)
         })

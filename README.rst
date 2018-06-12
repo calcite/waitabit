@@ -86,6 +86,29 @@ on the image below:
 
 .. image:: docs/input_screen_help.png
 
+Development
+-----------
+
+The backend is a standard python package, so you can install it with the usual::
+
+    $ python setup.py develop
+
+The frontend is written in `Vue.js`_ and can be run with the webpack development
+server. In the ``waitabit\frontend`` folder, run::
+
+    $ npm install
+    $ npm run dev
+
+It will serve the developer view on ``localhost:8080``, but it expects to have
+a running backend running on port 8000, so don't forget to have one instance of
+waitabit running when starting the npm dev server.
+
+Currently there is no CI set up for this project, so if you wan't to bundle
+the distributable JavaScript together with the waitabit python package (as are
+all the releases), you need to build the distributable package by running::
+
+    $ npm run build
+
 
 Licence
 -------

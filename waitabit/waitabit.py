@@ -18,13 +18,14 @@ class WaitABit:
         'waitabit', 'frontend/dist/index.html')).read()
 
     def __init__(self, queue_size, loop=None, session_timeout=3600,
-                 heart_beat_interval=3):
+                 heart_beat_interval=3, max_digits=3):
         self._queue = deque(maxlen=queue_size)
         self._app = web.Application(loop=loop)
         self._sockjs_manager = None
         self._session_timeout = session_timeout
         self._session_screensaver_status = False
         self._session_last_event = time.time()
+        self._max_digits = max_digits
 
         # Initialize routes
         self._app.router.add_get('/', self._index)
@@ -53,7 +54,8 @@ class WaitABit:
 
     async def _get_queue(self, request):
         temp = {'queue': list(self._queue), 'length': self._queue.maxlen,
-                'heartbeat_interval': self._heart_beat_interval}
+                'heartbeat_interval': self._heart_beat_interval,
+                'max_digits': self._max_digits}
         return web.json_response(temp)
 
     async def _new_call(self, request):
