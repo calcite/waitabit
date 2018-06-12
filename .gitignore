@@ -67,3 +67,6 @@ target/
 
 # PyCharm
 .idea/
+
+# Node build
+!waitabit/frontend/build/
