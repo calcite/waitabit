@@ -8,6 +8,12 @@ from collections import deque
 import sockjs
 import pkg_resources
 import time
+import logging
+
+from .base import WaitabitException
+from .keypad_handler import KeypadHandler
+
+logger = logging.getLogger(__name__)
 
 
 class WaitABit:
@@ -18,7 +24,8 @@ class WaitABit:
         'waitabit', 'frontend/dist/index.html')).read()
 
     def __init__(self, queue_size, loop=None, session_timeout=3600,
-                 heart_beat_interval=3, max_digits=3):
+                 heart_beat_interval=3, max_digits=3, keypad_port='off',
+                 disable_input_page=False):
         self._queue = deque(maxlen=queue_size)
         self._app = web.Application(loop=loop)
         self._sockjs_manager = None
@@ -27,11 +34,19 @@ class WaitABit:
         self._session_last_event = time.time()
         self._max_digits = max_digits
 
+        # Custom keypad support
+        if keypad_port != 'off':
+            self._keypad_handler = KeypadHandler(keypad_port, loop,
+                                                 self._on_keypad_input)
+        else:
+            self._keypad_handler = None
+
         # Initialize routes
         self._app.router.add_get('/', self._index)
         self._app.router.add_static('/static', self.WEB_ASSETS)
         self._app.router.add_get('/api/queue', self._get_queue)
-        self._app.router.add_post('/api/queue', self._new_call)
+        if not disable_input_page:
+            self._app.router.add_post('/api/queue', self._new_call)
         self._app.router.add_delete('/api/queue', self._delete_call)
         self._app.router.add_post('/api/screensaver',
                                   self._activate_screen_saver)
@@ -49,6 +64,15 @@ class WaitABit:
         sockjs.add_endpoint(self._app, self._sockjs_handler, name='notifier',
                             prefix='/api/notifications/')
 
+    async def _on_keypad_input(self, number):
+        if number == KeypadHandler.DELETE_CMD:
+            self._delete_queue('all')
+        else:
+            try:
+                self._add_call(number)
+            except WaitabitException:
+                logger.debug("Skipping number already present in-queue.")
+
     async def _index(self, request):
         return web.Response(body=self.INDEX, content_type='text/html')
 
@@ -58,19 +82,24 @@ class WaitABit:
                 'max_digits': self._max_digits}
         return web.json_response(temp)
 
+    def _add_call(self, call_number):
+        if call_number in self._queue:
+            raise WaitabitException("Call already in the queue.")
+        self._queue.appendleft(call_number)
+        self._session_last_event = time.time()
+        self._set_screen_saver(False)
+        self._send_ws_message({'event': 'new_call',
+                               'queue': list(self._queue)})
+
     async def _new_call(self, request):
         try:
             call = (await request.json())['call']
-            if call in self._queue:
-                return web.HTTPBadRequest(reason="Call already in the queue.")
-            self._queue.appendleft(call)
-            self._session_last_event = time.time()
-            self._set_screen_saver(False)
-            self._send_ws_message({'event': 'new_call',
-                                   'queue': list(self._queue)})
+            self._add_call(call)
             return web.json_response({'queue': list(self._queue)})
-        except (KeyError):
+        except KeyError:
             return web.HTTPBadRequest(reason="Request in bad format.")
+        except WaitabitException as wbe:
+            return web.HTTPBadRequest(reason=str(wbe))
 
     def _delete_queue(self, to_be_deleted):
         if to_be_deleted == 'all':

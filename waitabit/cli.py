@@ -25,11 +25,20 @@ import logging
 @click.option('--max_digits', default=3,
               help="Maximum number of digits a called-out number can have "
                    "(Default = 3)")
-def main(host, port, queue_size, session_timeout, heart_beat, max_digits):
+@click.option('--keypad_port', default='off',
+              help="serial port to use for connection with custom number entry"
+                   "keypad. 'off' value means keypad is not used."
+                   "(default = off)")
+@click.option('--disable_input_page', default=False, is_flag=True,
+              help="Disable number entry via the input panel page.")
+def main(host, port, queue_size, session_timeout,
+         heart_beat, max_digits, keypad_port, disable_input_page):
     """Wait-a-Bit server."""
     loop = asyncio.get_event_loop()
     srv = WaitABit(queue_size, loop=loop, session_timeout=session_timeout,
-                   heart_beat_interval=heart_beat, max_digits=max_digits)
+                   heart_beat_interval=heart_beat, max_digits=max_digits,
+                   keypad_port=keypad_port,
+                   disable_input_page=disable_input_page)
 
     click.echo("Input screen served at http://{0}:{1}/#/input".format(
         host, port))

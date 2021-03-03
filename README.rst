@@ -59,7 +59,7 @@ Running the server
 
 The server is started from command-line::
 
-    $ waitabit --host 127.0.0.1 --port 8080 --queue_size 6 -- session_timeout 3600
+    $ waitabit --host 127.0.0.1 --port 8080 --queue_size 6 --session_timeout 3600
 
 The server command has several options apart of mandatory ``host``/``port``:
 
