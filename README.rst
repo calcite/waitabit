@@ -16,6 +16,8 @@ Wait-a-bit
 The simplest waiting line management app - one UI to enter an order number, one
 dashboard to display the number (plus a history of previous numbers).
 
+Also, support for a custom HW Keypad (project `Luncheonmeat`_).
+
 The numbers are expected to be assigned separately (manually).
 
 .. figure:: docs/mini_screenshots.png
@@ -71,7 +73,10 @@ The server command has several options apart of mandatory ``host``/``port``:
 
   Set to 0 to prevent session timeout/screen-saver activation.
 
-Help is also available with ``waitabit --help``.
+* ``keypad_port`` option can be used to specify the `Luncheonmeat` keypad uart
+  device path (such as ``/dev/ttyUSB0``).
+
+Full help is also available with ``waitabit --help``.
 
 Using the app
 +++++++++++++
@@ -131,3 +136,4 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 .. _`Corsica_S`: https://freesound.org/people/Corsica_S/sounds/91926/
 .. _`kwahmah_02`: https://freesound.org/people/kwahmah_02/sounds/256116/
 .. _`Vue.js`: https://vuejs.org/
+.. _`Luncheonmeat`: https://github.com/calcite/luncheonmeat
