@@ -15,6 +15,7 @@ requirements = [
     'Click>=6.0',
     'aiohttp>=2.2.5',
     'sockjs>=0.6.0',
+    'pyserial-asyncio>=0.5'
 ]
 
 setup_requirements = []
@@ -23,7 +24,7 @@ test_requirements = []
 
 setup(
     name='waitabit',
-    version='0.6.1',
+    version='0.6.2',
     description="The simplest waiting line management.",
     long_description=readme + '\n\n' + history,
     author="Josef Nevrly",

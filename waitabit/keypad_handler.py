@@ -48,14 +48,14 @@ class KeypadHandler(asyncio.Protocol):
 
     async def _reconnect(self):
         try:
-            logger.info(f"Connecting to Keypad at {self._uart}")
+            logger.info("Connecting to Keypad at %s", self._uart)
             self._protocol = await serial_asyncio.create_serial_connection(
                 self._loop, self._get_protocol, self._uart, baudrate=self.BAUDRATE,
                 stopbits=self.STOPBITS)
         except serial.SerialException:
             self._connected = False
             logger.info(f"Connection failed, will try again in "
-                  "{self.RECONNECT_INTERVAL} seconds...")
+                  "%.2f seconds...", self.RECONNECT_INTERVAL)
             await asyncio.sleep(self.RECONNECT_INTERVAL)
             self._loop.create_task(self._reconnect())
 
