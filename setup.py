@@ -24,7 +24,7 @@ test_requirements = []
 
 setup(
     name='waitabit',
-    version='0.6.2',
+    version='0.6.3',
     description="The simplest waiting line management.",
     long_description=readme + '\n\n' + history,
     author="Josef Nevrly",
