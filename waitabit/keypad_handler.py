@@ -81,7 +81,8 @@ class KeypadHandler(asyncio.Protocol):
     def data_received(self, data):
         self._buffer += data
         try:
-            eom_index = self._buffer.index(self.EOM)
+            eom_index = len(self._buffer) - \
+                        self._buffer[::-1].index(self.EOM) - 1
             msg = self._buffer[eom_index - self.MSG_LENGTH:eom_index]
             self._buffer = b""
             header, number, crc = struct.unpack('<BHB', msg)

@@ -6,6 +6,9 @@ import click
 from .waitabit import WaitABit
 import asyncio
 import logging
+import sys
+
+# logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
 @click.command()
 @click.version_option()
